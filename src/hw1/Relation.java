@@ -1,6 +1,7 @@
 package hw1;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * This class provides methods to perform relational algebra operations. It will be used
@@ -57,10 +58,10 @@ public class Relation {
 		}
 		
 		TupleDesc newTd = new TupleDesc(td.getTypes(), fieldsArr);
-		for (Tuple t:tuplesArr) {
-			t.setDesc(newTd);
-		}
-		Relation r1 = new Relation(tuplesArr, newTd);
+//		for (Tuple t:tuplesArr) {
+//			t.setDesc(newTd);
+//		}
+		Relation r1 = new Relation(tuples, newTd);
 		return r1;
 	}
 	
@@ -71,7 +72,30 @@ public class Relation {
 	 */
 	public Relation project(ArrayList<Integer> fields) {
 		//your code here
-		return null;
+		String[] newFields = new String[fields.size()];
+		Type[] newTypes = new Type[fields.size()];
+		ArrayList<Tuple> newTuples = new ArrayList<>();
+		
+		// get the info of the fields to be projected
+		for (int i = 0; i < fields.size(); i++) {
+			newTypes[i] = td.getType(fields.get(i));
+			newFields[i] = td.getFieldName(fields.get(i));
+		}
+		
+		// create a new TupleDesc with projected fields
+		TupleDesc newTd = new TupleDesc(newTypes, newFields);
+		
+		
+		for (int i = 0; i < fields.size(); i++) {
+			for (Tuple t: tuples) {
+				Tuple tup = new Tuple(newTd);
+				tup.setField(i, t.getField(fields.get(i)));
+				newTuples.add(tup);
+			}
+		}
+		
+		return new Relation(newTuples, newTd);
+		
 	}
 	
 	/**
@@ -85,7 +109,53 @@ public class Relation {
 	 */
 	public Relation join(Relation other, int field1, int field2) {
 		//your code here
-		return null;
+		
+		ArrayList<Type> newTypes = new ArrayList<Type>();
+		ArrayList<String> newFields = new ArrayList<String>();
+		
+		
+		Type[] ogTypes = td.getTypes();
+		String[] ogFields = td.getFields();
+		
+		for (int i = 0; i < ogTypes.length; i++) {
+			newTypes.add(ogTypes[i]);
+			newFields.add(ogFields[i]);
+		}
+		
+		Type[] otherTypes = other.td.getTypes();
+		String[] otherFields = other.td.getFields();
+		for (int i = 0; i < otherTypes.length; i++) {
+			newTypes.add(otherTypes[i]);
+			newFields.add(otherFields[i]);
+		}
+		
+		
+		ArrayList<Tuple> newTuples = new ArrayList<>();
+		
+		TupleDesc newTd = new TupleDesc(newTypes.toArray(new Type[0]), newFields.toArray(new String[0]));
+		
+		for (Tuple tpOg: tuples) {
+			for (Tuple tpOther: other.tuples) {
+				if (tpOg.getField(field1).compare(RelationalOperator.EQ, tpOther.getField(field2))) {
+					Tuple nt = new Tuple(newTd);
+					for (int i = 0; i < ogTypes.length; i++) {
+						nt.setField(i, tpOg.getField(i));
+					}
+					int fieldIndex = ogTypes.length;
+					for (int i = 0; i < otherTypes.length; i++) {
+						nt.setField(fieldIndex, tpOther.getField(i));
+						fieldIndex += 1;
+					}
+					newTuples.add(nt);
+					
+				}
+				
+			}
+		}
+		
+		Relation res = new Relation(newTuples, newTd);
+		
+		return res;
 	}
 	
 	/**
@@ -96,7 +166,13 @@ public class Relation {
 	 */
 	public Relation aggregate(AggregateOperator op, boolean groupBy) {
 		//your code here
-		return null;
+		Aggregator ag = new Aggregator(op, groupBy, td);
+		for (Tuple t: tuples) {
+			ag.merge(t);
+		}
+		
+		ArrayList<Tuple> newTuples = ag.getResults();
+		return new Relation(newTuples, td);
 	}
 	
 	public TupleDesc getDesc() {
@@ -115,6 +191,6 @@ public class Relation {
 	 */
 	public String toString() {
 		//your code here
-		return null;
+		return "";
 	}
 }

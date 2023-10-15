@@ -10,10 +10,20 @@ import java.util.Iterator;
  *
  */
 public class Aggregator {
-
+	
+	private AggregateOperator ao;
+	private boolean groupBy;
+	private TupleDesc td;
+	private ArrayList<Tuple> tuples = new ArrayList<>();
+	
+	private HashMap<Object, Integer> countMap = new HashMap<>();
+    private HashMap<Object, Integer> sumMap = new HashMap<>();
+	
 	public Aggregator(AggregateOperator o, boolean groupBy, TupleDesc td) {
 		//your code here
-
+		this.ao = o;
+		this.groupBy = groupBy;
+		this.td = td;
 	}
 
 	/**
@@ -22,8 +32,29 @@ public class Aggregator {
 	 */
 	public void merge(Tuple t) {
 		//your code here
+		if (groupBy) {
+			mergeGroup(t);
+		} else {
+			switch(ao) {
+				case MAX:
+					break;
+				case MIN:
+					break;
+				case AVG:
+					break;
+				case COUNT:
+//					countMap.put(groupKey, countMap.getOrDefault(groupKey, 0) + 1);
+					break;
+				case SUM:
+					break;
+			}
+		} 
 	}
 	
+	// if groupBy
+	public void mergeGroup(Tuple t) {
+		
+	}
 	/**
 	 * Returns the result of the aggregation
 	 * @return a list containing the tuples after aggregation

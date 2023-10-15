@@ -19,14 +19,26 @@ public class TupleDesc {
      */
     public TupleDesc(Type[] typeAr, String[] fieldAr) {
     	//your code here
+    	this.types = typeAr;
+    	this.fields = fieldAr;
     }
 
+    
+    public Type[] getTypes() {
+    	return this.types;
+    }
+    
+    public String[] getFields() {
+    	return  this.fields;
+    }
+    
+    
     /**
      * @return the number of fields in this TupleDesc
      */
     public int numFields() {
         //your code here
-    	return 0;
+    	return fields.length;
     }
 
     /**
@@ -38,7 +50,10 @@ public class TupleDesc {
      */
     public String getFieldName(int i) throws NoSuchElementException {
         //your code here
-    	return null;
+    	if (i >= 0 && i < fields.length) {
+            return fields[i];
+        }
+        throw new NoSuchElementException("Invalid index");
     }
 
     /**
@@ -50,7 +65,13 @@ public class TupleDesc {
      */
     public int nameToId(String name) throws NoSuchElementException {
         //your code here
-    	return 0;
+    	for(int i = 0; i < fields.length; i++) {
+    		 if (fields[i] != null && fields[i].equals(name)) {
+    			return i;
+    		}
+    	}
+    	throw new NoSuchElementException("Field not found: " + name);
+    	
     }
 
     /**
@@ -62,7 +83,10 @@ public class TupleDesc {
      */
     public Type getType(int i) throws NoSuchElementException {
         //your code here
-    	return null;
+    	if (i >= 0 && i < types.length) {
+            return types[i];
+        }
+        throw new NoSuchElementException("Invalid index: " + i);
     }
 
     /**
@@ -71,7 +95,18 @@ public class TupleDesc {
      */
     public int getSize() {
     	//your code here
-    	return 0;
+    	int size = 0;
+    	for (Type type : types) {
+    		switch(type) {
+    		case INT: 
+    			size += 4;
+    			break;
+    		case STRING:
+    			size += 129;
+    			break;
+    		}
+    	}
+    	return size;
     }
 
     /**
@@ -84,7 +119,10 @@ public class TupleDesc {
      */
     public boolean equals(Object o) {
     	//your code here
-    	return false;
+    	if (o == null || o.getClass() != TupleDesc.class) return false;
+    	TupleDesc td = (TupleDesc) o;
+    	
+    	return Arrays.equals(td.types, this.types);
     }
     
 
@@ -102,6 +140,14 @@ public class TupleDesc {
      */
     public String toString() {
         //your code here
-    	return "";
+    	StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < types.length; i++) {
+            if (i > 0) {
+                sb.append(", ");
+            }
+            sb.append(types[i].toString());
+            sb.append("(").append(fields[i]).append(")");
+        }
+        return sb.toString();
     }
 }

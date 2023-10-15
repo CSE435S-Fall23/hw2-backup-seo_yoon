@@ -16,12 +16,30 @@ import java.util.*;
 
 public class Catalog {
 	
+	private Map<String, Table> tableMap;
+	private Map<Integer, String> idNameMap;
+	
+	private class Table{
+		public HeapFile file;
+		public String name;
+		public String pKeyField;
+		
+		public Table(HeapFile file, String name, String pKeyField) {
+			this.file = file;
+			this.name = name;
+			this.pKeyField = pKeyField;
+		}
+	}
+	
+	
     /**
      * Constructor.
      * Creates a new, empty catalog.
      */
     public Catalog() {
     	//your code here
+    	this.tableMap = new HashMap<String, Table>();
+    	this.idNameMap = new HashMap<Integer, String>();
     }
 
     /**
@@ -34,6 +52,16 @@ public class Catalog {
      */
     public void addTable(HeapFile file, String name, String pkeyField) {
     	//your code here
+    	Table table = new Table(file, name, pkeyField);
+    	
+    	if (this.tableMap.containsKey(name)) {
+    		int idToRemove = this.tableMap.get(name).file.getId();
+    		this.idNameMap.remove(idToRemove);
+    	}
+    	
+    	this.idNameMap.put(file.getId(), name);
+    	this.tableMap.put(name, table);
+    	
     }
 
     public void addTable(HeapFile file, String name) {
@@ -44,9 +72,14 @@ public class Catalog {
      * Return the id of the table with a specified name,
      * @throws NoSuchElementException if the table doesn't exist
      */
-    public int getTableId(String name) {
+    public int getTableId(String name) throws NoSuchElementException {
     	//your code here
-    	return 0;
+    	if (!this.tableMap.containsKey(name)) {
+        	throw new NoSuchElementException("Table not found: " + name);
+    	}
+
+    	int tableId = this.tableMap.get(name).file.getId();
+    	return tableId;
     }
 
     /**
@@ -56,7 +89,16 @@ public class Catalog {
      */
     public TupleDesc getTupleDesc(int tableid) throws NoSuchElementException {
     	//your code here
-    	return null;
+    	if (!this.idNameMap.containsKey(tableid)) {
+        	throw new NoSuchElementException("Table id not found: " + tableid);
+    	}
+    	
+    	String name = this.idNameMap.get(tableid);
+    	Table table = this.tableMap.get(name);
+    	TupleDesc tupleDesc = table.file.getTupleDesc();
+
+    	return tupleDesc;
+
     }
 
     /**
@@ -67,27 +109,51 @@ public class Catalog {
      */
     public HeapFile getDbFile(int tableid) throws NoSuchElementException {
     	//your code here
-    	return null;
+    	if (!this.idNameMap.containsKey(tableid)) {
+        	throw new NoSuchElementException("Table id not found: " + tableid);
+    	}
+
+    	String name = this.idNameMap.get(tableid);
+    	Table table = this.tableMap.get(name);
+    	HeapFile dbFile = table.file;
+
+    	return dbFile;
     }
 
     /** Delete all tables from the catalog */
     public void clear() {
-    	//your code here
+    	this.idNameMap.clear();
+    	this.tableMap.clear();
     }
 
-    public String getPrimaryKey(int tableid) {
+    public String getPrimaryKey(int tableid) throws NoSuchElementException {
     	//your code here
-    	return null;
+    	if (!this.idNameMap.containsKey(tableid)) {
+			throw new NoSuchElementException("Table id not found: " + tableid);
+		}
+    	
+    	String name = this.idNameMap.get(tableid);
+    	Table table = this.tableMap.get(name);
+    	String pKey = table.pKeyField;
+
+    	return pKey;
+
     }
 
     public Iterator<Integer> tableIdIterator() {
     	//your code here
-    	return null;
+    	Set<Integer> keySet = this.idNameMap.keySet();
+
+    	return keySet.iterator();
     }
 
-    public String getTableName(int id) {
+    public String getTableName(int id) throws NoSuchElementException{
     	//your code here
-    	return null;
+    	if (!this.idNameMap.containsKey(id)) {
+			throw new NoSuchElementException("Table id not found: " + id);
+		}
+
+    	return this.idNameMap.get(id);
     }
     
     /**
@@ -144,4 +210,3 @@ public class Catalog {
         }
     }
 }
-

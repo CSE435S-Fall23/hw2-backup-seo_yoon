@@ -15,6 +15,8 @@ public class Relation {
 	
 	public Relation(ArrayList<Tuple> l, TupleDesc td) {
 		//your code here
+		this.tuples = l;
+		this.td = td;
 	}
 	
 	/**
@@ -26,7 +28,15 @@ public class Relation {
 	 */
 	public Relation select(int field, RelationalOperator op, Field operand) {
 		//your code here
-		return null;
+		
+		Relation r = new Relation(new ArrayList<>(), getDesc());
+		for (Tuple t : getTuples()) {
+			if (t.getField(field).compare(op, operand)) {
+				r.tuples.add(t);
+			}
+		}
+		
+		return r;
 	}
 	
 	/**
@@ -37,7 +47,21 @@ public class Relation {
 	 */
 	public Relation rename(ArrayList<Integer> fields, ArrayList<String> names) {
 		//your code here
-		return null;
+		String[] fieldsArr = this.td.getFields();
+		ArrayList<Tuple> tuplesArr = this.tuples;
+		
+		for (int i = 0; i < fields.size(); i++) {
+			if (fields.get(i) != null) {
+				fieldsArr[fields.get(i)] = names.get(i);
+			}
+		}
+		
+		TupleDesc newTd = new TupleDesc(td.getTypes(), fieldsArr);
+		for (Tuple t:tuplesArr) {
+			t.setDesc(newTd);
+		}
+		Relation r1 = new Relation(tuplesArr, newTd);
+		return r1;
 	}
 	
 	/**
@@ -77,12 +101,12 @@ public class Relation {
 	
 	public TupleDesc getDesc() {
 		//your code here
-		return null;
+		return this.td;
 	}
 	
 	public ArrayList<Tuple> getTuples() {
 		//your code here
-		return null;
+		return this.tuples;
 	}
 	
 	/**

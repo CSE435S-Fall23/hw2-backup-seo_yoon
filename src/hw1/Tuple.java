@@ -15,13 +15,21 @@ public class Tuple {
 	 * Creates a new tuple with the given description
 	 * @param t the schema for this tuple
 	 */
+	
+	private TupleDesc tupleDesc;
+	private int pId;
+	private int id;
+	private Field[] fields;
+	
 	public Tuple(TupleDesc t) {
 		//your code here
+		this.tupleDesc = t;
+		this.fields = new Field[t.numFields()];
 	}
 	
 	public TupleDesc getDesc() {
 		//your code here
-		return null;
+		return this.tupleDesc;
 	}
 	
 	/**
@@ -30,11 +38,12 @@ public class Tuple {
 	 */
 	public int getPid() {
 		//your code here
-		return 0;
+		return this.pId;
 	}
 
 	public void setPid(int pid) {
 		//your code here
+		this.pId = pid;
 	}
 
 	/**
@@ -43,15 +52,17 @@ public class Tuple {
 	 */
 	public int getId() {
 		//your code here
-		return 0;
+		return this.id;
 	}
 
 	public void setId(int id) {
 		//your code here
+		this.id = id;
 	}
 	
 	public void setDesc(TupleDesc td) {
 		//your code here;
+		this.tupleDesc = td;
 	}
 	
 	/**
@@ -61,11 +72,12 @@ public class Tuple {
 	 */
 	public void setField(int i, Field v) {
 		//your code here
+		this.fields[i] = v;
 	}
 	
 	public Field getField(int i) {
 		//your code here
-		return null;
+		return fields[i];
 	}
 	
 	/**
@@ -75,7 +87,15 @@ public class Tuple {
 	 */
 	public String toString() {
 		//your code here
-		return "";
+		StringBuilder sb = new StringBuilder();
+        for (int i = 0; i <fields.length; i++) {
+            if (i > 0) {
+                sb.append(", ");
+            }
+            sb.append(fields[i].toString());
+            sb.append("(").append(fields[i]).append(")");
+        }
+        return sb.toString();
+	
 	}
 }
-	

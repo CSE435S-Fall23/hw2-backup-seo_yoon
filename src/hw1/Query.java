@@ -56,7 +56,7 @@ public class Query {
 		
 		Relation relation = new Relation(tuples, tupleDesc);
 		
-		System.out.println(sb.toString());
+//		System.out.println(sb.toString());
 		
 		
 		//JOIN
@@ -135,9 +135,7 @@ public class Query {
 				}
 			}
 			
-			
-			
-			
+			// handle project (WHERE)
 			relation = relation.project(fieldsArr);
 		
 			
@@ -148,11 +146,8 @@ public class Query {
 			
 			// handle rename(AS)
 			if (isRenamed) {
-				System.out.println(newNames);
 				relation = relation.rename(fieldsArr, newNames);
 			}
-			
-						
 			
 		}
 

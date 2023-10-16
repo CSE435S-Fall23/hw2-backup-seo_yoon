@@ -54,6 +54,8 @@ public class MyUnitTest {
 		tableId = c.getTableId("A");
 		atd = c.getTupleDesc(tableId);
 		ahf = c.getDbFile(tableId);
+		
+		
 	}
 	
 	@Test
@@ -168,7 +170,7 @@ public class MyUnitTest {
 		assert(r.getDesc().getSize() == 4);
 		assert(r.getTuples().size() == 8);
 		assertTrue(r.getDesc().getFieldName(0).equals("NewName"));
-
+		assertTrue(atd.getFieldName(0).equals("a1"));
 	}
 
 }

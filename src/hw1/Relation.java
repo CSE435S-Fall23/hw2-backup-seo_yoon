@@ -1,7 +1,6 @@
 package hw1;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * This class provides methods to perform relational algebra operations. It will be used
@@ -58,10 +57,10 @@ public class Relation {
 		}
 		
 		TupleDesc newTd = new TupleDesc(td.getTypes(), fieldsArr);
-//		for (Tuple t:tuplesArr) {
-//			t.setDesc(newTd);
-//		}
-		Relation r1 = new Relation(tuples, newTd);
+		for (Tuple t:tuplesArr) {
+			t.setDesc(newTd);
+		}
+		Relation r1 = new Relation(tuplesArr, newTd);
 		return r1;
 	}
 	
@@ -85,17 +84,15 @@ public class Relation {
 		// create a new TupleDesc with projected fields
 		TupleDesc newTd = new TupleDesc(newTypes, newFields);
 		
-		
-		for (int i = 0; i < fields.size(); i++) {
-			for (Tuple t: tuples) {
-				Tuple tup = new Tuple(newTd);
+		for (Tuple t: tuples) {
+			Tuple tup = new Tuple(newTd);
+			for (int i = 0; i < fields.size(); i++) {
 				tup.setField(i, t.getField(fields.get(i)));
-				newTuples.add(tup);
 			}
+			newTuples.add(tup);
 		}
 		
 		return new Relation(newTuples, newTd);
-		
 	}
 	
 	/**
@@ -166,13 +163,13 @@ public class Relation {
 	 */
 	public Relation aggregate(AggregateOperator op, boolean groupBy) {
 		//your code here
-		Aggregator ag = new Aggregator(op, groupBy, td);
-		for (Tuple t: tuples) {
-			ag.merge(t);
-		}
+		Aggregator aggregator = new Aggregator(op, groupBy,this.td);
 		
-		ArrayList<Tuple> newTuples = ag.getResults();
-		return new Relation(newTuples, td);
+		for (Tuple t : tuples) {
+			aggregator.merge(t);
+		}
+		Relation res = new Relation(aggregator.getResults(), this.td);
+		return res;
 	}
 	
 	public TupleDesc getDesc() {
@@ -191,6 +188,14 @@ public class Relation {
 	 */
 	public String toString() {
 		//your code here
-		return "";
+		System.out.println(td.numFields());
+		String res = td.toString();
+		res += "\n";
+		
+		for (Tuple t : tuples) {
+			res += t.toString();
+			res += " ";
+		}
+		return res;
 	}
 }

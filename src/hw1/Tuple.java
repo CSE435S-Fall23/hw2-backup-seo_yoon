@@ -92,9 +92,9 @@ public class Tuple {
             if (i > 0) {
                 sb.append(", ");
             }
-            sb.append(fields[i].toString());
-            sb.append("(").append(fields[i]).append(")");
+            sb.append(fields[i].toString() + " ");
         }
+        sb.append("\n");
         return sb.toString();
 	
 	}

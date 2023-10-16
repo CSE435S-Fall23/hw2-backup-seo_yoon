@@ -199,7 +199,7 @@ public class Catalog {
                 TupleDesc t = new TupleDesc(typeAr, namesAr);
                 HeapFile tabHf = new HeapFile(new File("testfiles/" + name + ".dat"), t);
                 addTable(tabHf,name,primaryKey);
-                System.out.println("Added table : " + name + " with schema " + t);
+//                System.out.println("Added table : " + name + " with schema " + t);
             }
         } catch (IOException e) {
             e.printStackTrace();

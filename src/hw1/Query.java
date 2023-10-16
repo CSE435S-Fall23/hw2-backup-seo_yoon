@@ -10,11 +10,13 @@ import net.sf.jsqlparser.parser.*;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.*;
+import net.sf.jsqlparser.statement.select.ExpressionListItem;
 import net.sf.jsqlparser.statement.select.FromItem;
 import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectBody;
+import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
 public class Query {
@@ -108,24 +110,50 @@ public class Query {
 		
 		ColumnVisitor cv = new ColumnVisitor();
 
-		
+		ArrayList<String> newNames = new ArrayList<String>();
+		ArrayList<Integer> newNameFields = new ArrayList<Integer>();
+
+		boolean isRenamed = false;
 		if (selectItems != null && !selectItems.get(0).toString().equals("*")) {
-			
 			
 			for (SelectItem item : selectItems) {
 
 				item.accept(cv);
-				
 				String selectCol = cv.isAggregate() ? cv.getColumn() : item.toString();
-				fieldsArr.add(relation.getDesc().nameToId(selectCol));
-				System.out.println(selectCol);
+				
+				
+				// AS - rename
+				SelectExpressionItem expItem = (SelectExpressionItem) item;
+
+				if (expItem.getAlias() != null) {
+					newNames.add(expItem.getAlias().getName());
+					String[] split = selectCol.toString().split(" AS ");
+					fieldsArr.add(relation.getDesc().nameToId(split[0]));
+					isRenamed = true;
+				} else {
+					fieldsArr.add(relation.getDesc().nameToId(selectCol));
+				}
 			}
 			
-			relation = relation.project(fieldsArr);
 			
+			
+			
+			relation = relation.project(fieldsArr);
+		
+			
+			// handle aggregate
 			if (cv.isAggregate()) {
 				relation = relation.aggregate(cv.getOp(), isGroupBy);
-			} 			
+			}
+			
+			// handle rename(AS)
+			if (isRenamed) {
+				System.out.println(newNames);
+				relation = relation.rename(fieldsArr, newNames);
+			}
+			
+						
+			
 		}
 
 		return relation;

@@ -43,7 +43,7 @@ public class QueryTest {
 	public void testSimple() {
 		Query q = new Query("SELECT a1, a2 FROM A");
 		Relation r = q.execute();
-		System.out.println(r.getTuples().size());
+		
 		assertTrue(r.getTuples().size() == 8);
 		assertTrue(r.getDesc().getSize() == 8);
 	}
@@ -102,5 +102,7 @@ public class QueryTest {
 		assertTrue(r.getTuples().size() == 8);
 		assertTrue(r.getDesc().getSize() == 8);
 	}
+	
+
 	
 }

@@ -16,6 +16,7 @@ import hw1.Catalog;
 import hw1.Database;
 import hw1.HeapFile;
 import hw1.IntField;
+import hw1.Query;
 import hw1.Relation;
 import hw1.RelationalOperator;
 import hw1.TupleDesc;
@@ -155,6 +156,19 @@ public class MyUnitTest {
 				assertTrue(((IntField)t.getField(1)).getValue() == 8);
 			}
 		}
+	}
+
+	
+	@Test
+	public void testRenameQuery() {
+
+		Query q = new Query("SELECT a1 AS NewName FROM A");
+		Relation r = q.execute();
+
+		assert(r.getDesc().getSize() == 4);
+		assert(r.getTuples().size() == 8);
+		assertTrue(r.getDesc().getFieldName(0).equals("NewName"));
+
 	}
 
 }

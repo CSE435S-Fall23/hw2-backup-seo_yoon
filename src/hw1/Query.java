@@ -119,6 +119,8 @@ public class Query {
 			for (SelectItem item : selectItems) {
 
 				item.accept(cv);
+				
+				// Check AGGREGATE
 				String selectCol = cv.isAggregate() ? cv.getColumn() : item.toString();
 				
 				

@@ -1,0 +1,1 @@
+Aggregate does not support implement oof String(-2.5)			
